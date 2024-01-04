@@ -38,12 +38,21 @@
                 margin: auto;
                 width: 24px;
                 height: 25px;
-                bottom: 30px;
+                bottom: 40px;
+            }
+            .enemy{
+                position: absolute;
+                right: 0;
+                /* left: 200px; */
+                margin: auto;
+                top: -70px; /* 敵機起始位置 */
+                width: 80px;
+                height: 64px;
             }
         }
 
 
-        @keyframes bgImgAni{
+        @keyframes bgImgAni{ 
             0% {
                 background-image: url(./images/univer1.png)
             }
@@ -65,6 +74,9 @@
             <!-- <div class="bullet bullet${bn}">
                 <img src="./images/bullet1.png" alt="">
             </div> -->
+            <!-- <div class="enemy enemy1">
+                <img class="enemyPlane" src="./images/plane2.png" alt="">
+            </div> -->
         </div>
     </div>
 
@@ -73,6 +85,7 @@
         let planePosition = 0;
         let planeSpeed = 15; //控制飛機移動速度
         let bn = 0;
+        let en = 0;
         let keysPressed = {};
         let shooting = true;
 
@@ -83,6 +96,32 @@
         })
 
         gameLoop()
+        setEnemy()
+        setInterval(()=>{
+            setEnemy()
+        }, 700)//敵機生成的時間
+        
+        function setEnemy(){
+            let enemyPlanePosition = (Math.floor(Math.random()*5) - 2) * 190
+            en++;
+            let enemyPlaneTem = 
+                `<div class="enemy enemy${en}">
+                    <img class="enemyPlane" src="./images/plane2.png" alt="">
+                </div>`;
+            
+            $(".container").append(enemyPlaneTem);
+            $(".container .enemy"+en).css("left", enemyPlanePosition)
+            $(".container .enemy"+en).animate({
+                top:400
+            },{
+                duration: 4000,
+                easing: "linear",
+                complete: function(){
+                    $(this).remove()
+                }
+            })
+            
+        }
 
         function gameLoop(){
             //console.log(keysPressed);
