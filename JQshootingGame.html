@@ -38,7 +38,7 @@
                 margin: auto;
                 width: 24px;
                 height: 25px;
-                bottom: 0;
+                bottom: 30px;
             }
         }
 
@@ -71,47 +71,65 @@
 
     <script>
         let planePosition = 0;
+        let planeSpeed = 15; //控制飛機移動速度
         let bn = 0;
+        let keysPressed = {};
+        let shooting = true;
 
         $(window).on("keyup", (e)=>{
-            //console.log(e.which); //37左, 39右, 32space
-            if(e.which === 32){
-                //發射子彈
-                bn++;
-                let bulletTem = 
-                    `<div class="bullet bullet${bn}">
-                        <img src="./images/bullet1.png" alt="">
-                    </div>`;
-                $(".container").append(bulletTem);
-                $(".container .bullet"+bn).css("left", planePosition)
-                $(".container .bullet"+bn).animate(
-                    {bottom: "480px"},
-                    1000,
-                    "linear",
-                    function(){
-                        $(this).remove()
-                    }
-                )
-            }
+            delete keysPressed[e.which];   
         }).on("keydown", (e)=>{
-            if(e.which === 37){
+            keysPressed[e.which] = true;
+        })
+
+        gameLoop()
+
+        function gameLoop(){
+            //console.log(keysPressed);
+            if(keysPressed[37]){
                 //向左移動
-                planePosition-=10;
+                planePosition-= planeSpeed;
                 if(planePosition <= -400){
                     planePosition = -400;
                 }
                 $(".plane").css("left", planePosition);
-
-            }else if(e.which === 39){
+            }
+            if(keysPressed[39]){
                 //向右移動
-                planePosition+=10;
+                planePosition+= planeSpeed;
                 if(planePosition >= 400){
                     planePosition = 400;
                 }
                 $(".plane").css("left", planePosition);
             }
-            //console.log(planePosition); //-400
-        })
+            if(keysPressed[32]){
+                //發射子彈
+                if(shooting === true){
+                    shooting = false;
+                    bn++;
+                    let bulletTem = 
+                        `<div class="bullet bullet${bn}">
+                            <img src="./images/bullet1.png" alt="">
+                        </div>`;
+                    $(".container").append(bulletTem);
+                    $(".container .bullet"+bn).css("left", planePosition)
+                    $(".container .bullet"+bn).animate(
+                        {bottom: "480px"},
+                        1000,
+                        "linear",
+                        function(){
+                            $(this).remove()
+                        }
+                    )
+                    setTimeout(()=>{ 
+                        shooting = true;
+                    }, 250) //子彈生成時間
+                }
+            
+            }
+
+            window.requestAnimationFrame(gameLoop)
+        }
 
     </script>
 
